@@ -4,8 +4,7 @@ set -e
 
 echo "[MariaDB] Starting MariaDB initialization script..."
 
-# Check if this is the first time initialization
-if [ ! -d "/var/lib/mysql/mysql" ]; then
+if [ ! -f "/var/lib/mysql/.init-complete" ]; then
     echo "[MariaDB] Data directory not found. Initializing MariaDB..."
     
     mysql_install_db --user=mysql --datadir=/var/lib/mysql
@@ -39,6 +38,8 @@ EOF
     echo "[MariaDB] Stopping temporary MariaDB instance..."
     mysqladmin -u root -p"${MYSQL_ROOT_PASSWORD}" shutdown
     wait $MYSQL_PID
+    
+    touch /var/lib/mysql/.init-complete
     
     echo "[MariaDB] Initialization complete."
 else
